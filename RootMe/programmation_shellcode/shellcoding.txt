@@ -1,0 +1,97 @@
+
+
+[+] Objectif du challenge "shellcoding" :
+
+  A partir du dump ci-dessous , vous devez recréer un shellcode fonctionnel .
+    Votre but sera donc de reconstituer un code assembleur correct , de la meme façon
+      que vous vous y prendriez pour forger un vrai shellcode afin d'afficher le pass de validation.
+
+
+(!) .Attention: Le dump suivant contient des erreurs (volontaires bien que basique) .
+                  A vous de les rectifier et d'arriver a en faire un code correct pour pouvoir
+		    atteindre l'objectif demandé.
+		   
+
+
+
+
+
+
+[+] Dump du binaire :
+
+
+objdump -D shellcode_asm
+
+shellcode_asm:     file format elf32-i386
+
+
+Disassembly of section .text:
+
+08048080 <_asm_main>:
+ 8048080:	31 c0                	xor    %eax,%eax
+ 8048082:	31 db                	xor    %ebx,%ebx
+ 8048084:	31 c9                	xor    %ecx,%ecx
+ 8048086:	31 d2                	xor    %edx,%edx
+ 8048088:	b8 00 00 00 00       	mov    $0x0,%eax
+ 804808d:	31 c0                	xor    %eax,%eax
+ 804808f:	81 c1 bb 80 04 08    	add    $0x80480bb,%ecx
+ 8048095:	50                   	push   %eax
+ 8048096:	5a                   	pop    %edx
+ 8048097:	ba 19 00 00 00       	mov    $0x19,%edx
+ 804809c:	ba 00 00 00 00       	mov    $0x0,%edx
+ 80480a1:	cd 80                	int    $0x80
+ 80480a3:	31 d2                	xor    %edx,%edx
+ 80480a5:	5a                   	pop    %edx
+ 80480a6:	31 c0                	xor    %eax,%eax
+ 80480a8:	58                   	pop    %eax
+ 80480a9:	b8 00 00 00 00       	mov    $0x0,%eax
+ 80480ae:	2d 01 00 00 00       	sub    $0x1,%eax
+ 80480b3:	90                   	nop
+ 80480b4:	cd 80                	int    $0x80
+ 80480b6:	31 db                	xor    %ebx,%ebx
+ 80480b8:	61                   	popa   
+ 80480b9:	c9                   	leave  
+ 80480ba:	c3                   	ret    
+
+080480bb <_asm_main.hexastring>:
+ 80480bb:	30 78 79             	xor    %bh,0x79(%eax)
+ 80480be:	30 75 5f             	xor    %dh,0x5f(%ebp)
+ 80480c1:	27                   	daa    
+ 80480c2:	76 20                	jbe    80480e4 <_asm_main.hexastring+0x29>
+ 80480c4:	33 5f 66             	xor    0x66(%edi),%ebx
+ 80480c7:	30 75 6e             	xor    %dh,0x6e(%ebp)
+ 80480ca:	44                   	inc    %esp
+ 80480cb:	5f                   	pop    %edi
+ 80480cc:	74 68                	je     8048136 <_asm_main.hexastring+0x7b>
+ 80480ce:	45                   	inc    %ebp
+ 80480cf:	5f                   	pop    %edi
+ 80480d0:	6b 33 79             	imul   $0x79,(%ebx),%esi
+ 80480d3:	0a                   	.byte 0xa
+
+Disassembly of section .data:
+
+080490d4 <_key>:
+ 80490d4:	57                   	push   %edi
+ 80490d5:	30 4f 37             	xor    %cl,0x37(%edi)
+ 80490d8:	26                   	es
+ 80490d9:	78 30                	js     804910b <modified_code+0x2b>
+ 80490db:	6e                   	outsb  %ds:(%esi),(%dx)
+ 80490dc:	30 70 0a             	xor    %dh,0xa(%eax)
+
+Disassembly of section .bss:
+
+080490e0 <modified_code>:
+	...
+
+Disassembly of section .comment:
+
+00000000 <.comment>:
+   0:	00 54 68 65          	add    %dl,0x65(%eax,%ebp,2)
+   4:	20 4e 65             	and    %cl,0x65(%esi)
+   7:	74 77                	je     80 <_asm_main-0x8048000>
+   9:	69 64 65 20 41 73 73 	imul   $0x65737341,0x20(%ebp,%eiz,2),%esp
+  10:	65 
+  11:	6d                   	insl   (%dx),%es:(%edi)
+  12:	62 6c 65 72          	bound  %ebp,0x72(%ebp,%eiz,2)
+  16:	20 32                	and    %dh,(%edx)
+  18:	2e 30 35 2e 30 31 00 	xor    %dh,%cs:0x31302e
